@@ -1,15 +1,27 @@
-import { Controller, Get, Post, Body, Headers } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Headers,
+  UseGuards,
+} from '@nestjs/common'
 import { UserService } from '@/user/user.service'
-import { UpdateUserImageDto, UpdateUserProfileDto } from '@/user/dto/update-user.dto'
+import {
+  UpdateUserImageDto,
+  UpdateUserProfileDto,
+} from '@/user/dto/update-user.dto'
 import { THeaders } from './types'
+import { AuthGuard } from '@/auth/auth.guard'
 
+@UseGuards(AuthGuard)
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
   getUser(@Headers() headers: THeaders) {
-    return this.userService.getUser(headers.authorization)
+    return this.userService.getUser(headers.userid)
   }
 
   @Post('updateProfile')
@@ -17,7 +29,7 @@ export class UserController {
     @Headers() headers: THeaders,
     @Body() updateProfileDto: UpdateUserProfileDto,
   ) {
-    return this.userService.updateProfile(headers.authorization, updateProfileDto)
+    return this.userService.updateProfile(headers.userid, updateProfileDto)
   }
 
   @Post('updateImage')
@@ -25,6 +37,6 @@ export class UserController {
     @Headers() headers: THeaders,
     @Body() updateImageDto: UpdateUserImageDto,
   ) {
-    return this.userService.updateImage(headers.authorization, updateImageDto)
+    return this.userService.updateImage(headers.userid, updateImageDto)
   }
 }

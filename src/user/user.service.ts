@@ -1,22 +1,16 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { PrismaService } from '@/prisma/prisma.service'
 import { UpdateUserImageDto, UpdateUserProfileDto } from './dto/update-user.dto'
-import { TokenService } from '@/token/token.service'
 
 @Injectable()
 export class UserService {
-  constructor(
-    private readonly prismaService: PrismaService,
-    private readonly tokenService: TokenService,
-  ) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
-  async getUser(token: string) {
+  async getUser(id: string) {
     try {
-      const { userId } = await this.tokenService.getPayload(token)
-
       return this.prismaService.user.findUnique({
         where: {
-          id: userId,
+          id,
         },
       })
     } catch (e) {
@@ -24,15 +18,13 @@ export class UserService {
     }
   }
 
-  async updateProfile(token: string, data: UpdateUserProfileDto) {
+  async updateProfile(id: string, data: UpdateUserProfileDto) {
     try {
-      const { userId } = await this.tokenService.getPayload(token)
-
       const { firstName, lastName } = data
 
       return this.prismaService.user.update({
         where: {
-          id: userId,
+          id,
         },
         data: {
           firstName,
@@ -44,14 +36,13 @@ export class UserService {
     }
   }
 
-  async updateImage(token: string, data: UpdateUserImageDto) {
+  async updateImage(id: string, data: UpdateUserImageDto) {
     try {
-      const { userId } = await this.tokenService.getPayload(token)
 
       const { img } = data
       return this.prismaService.user.update({
         where: {
-          id: userId,
+          id,
         },
         data: {
           img,
