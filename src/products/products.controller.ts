@@ -10,8 +10,15 @@ export class ProductsController {
     return this.productsService.getProducts()
   }
 
+  @Get('categories')
+  getUniqueCategories() {
+    return this.productsService.getUniqueCategories()
+  }
+
   @Get(':category')
   getByCategoryProducts(@Param('category') category: string) {
     return this.productsService.getByCategoryProducts(category)
   }
+
+ 
 }

@@ -1,53 +1,64 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { PrismaService } from '@/prisma/prisma.service'
-
-type TUpdateImage = {
-  id: string
-  img: string
-}
-
-type TUpdateProfile = {
-  id: string
-  firstName: string
-  lastName: string
-}
+import { UpdateUserImageDto, UpdateUserProfileDto } from './dto/update-user.dto'
+import { TokenService } from '@/token/token.service'
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly tokenService: TokenService,
+  ) {}
 
-  getUser(id: string) {
-    return this.prismaService.user.findUnique({
-      where: {
-        id,
-      },
-    })
+  async getUser(token: string) {
+    try {
+      const { userId } = await this.tokenService.getPayload(token)
+
+      return this.prismaService.user.findUnique({
+        where: {
+          id: userId,
+        },
+      })
+    } catch (e) {
+      throw new UnauthorizedException()
+    }
   }
 
-  updateProfile({
-    id,
-    firstName,
-    lastName,
-  }: TUpdateProfile) {
-    return this.prismaService.user.update({
-      where: {
-        id,
-      },
-      data: {
-        firstName,
-        lastName,
-      },
-    })
+  async updateProfile(token: string, data: UpdateUserProfileDto) {
+    try {
+      const { userId } = await this.tokenService.getPayload(token)
+
+      const { firstName, lastName } = data
+
+      return this.prismaService.user.update({
+        where: {
+          id: userId,
+        },
+        data: {
+          firstName,
+          lastName,
+        },
+      })
+    } catch (e) {
+      throw new UnauthorizedException()
+    }
   }
 
-  updateImage({ id, img }: TUpdateImage) {
-    return this.prismaService.user.update({
-      where: {
-        id,
-      },
-      data: {
-        img,
-      },
-    })
+  async updateImage(token: string, data: UpdateUserImageDto) {
+    try {
+      const { userId } = await this.tokenService.getPayload(token)
+
+      const { img } = data
+      return this.prismaService.user.update({
+        where: {
+          id: userId,
+        },
+        data: {
+          img,
+        },
+      })
+    } catch (e) {
+      throw new UnauthorizedException()
+    }
   }
 }

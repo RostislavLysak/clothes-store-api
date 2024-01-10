@@ -16,4 +16,13 @@ export class ProductsService {
       },
     })
   }
+
+  getUniqueCategories() {
+    return this.prismaService.product.findMany({
+      distinct: ['category'],
+      select: {
+        category: true,
+      },
+    })
+  }
 }
