@@ -1,26 +1,30 @@
 import { Controller, Get, Post, Body, Headers } from '@nestjs/common'
 import { UserService } from '@/user/user.service'
+import { UpdateUserImageDto, UpdateUserProfileDto } from '@/user/dto/update-user.dto'
+import { THeaders } from './types'
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  getUser(@Headers('id') id: string) {
-    return this.userService.getUser(id)
+  getUser(@Headers() headers: THeaders) {
+    return this.userService.getUser(headers.authorization)
   }
 
   @Post('updateProfile')
   updateProfile(
-    @Headers('id') id: string,
-    @Body('firstName') firstName: string,
-    @Body('lastName') lastName: string,
+    @Headers() headers: THeaders,
+    @Body() updateProfileDto: UpdateUserProfileDto,
   ) {
-    return this.userService.updateProfile({ id, firstName, lastName })
+    return this.userService.updateProfile(headers.authorization, updateProfileDto)
   }
 
   @Post('updateImage')
-  updateImage(@Headers('id') id: string, @Body('img') img: string) {
-    return this.userService.updateImage({ id, img })
+  updateImage(
+    @Headers() headers: THeaders,
+    @Body() updateImageDto: UpdateUserImageDto,
+  ) {
+    return this.userService.updateImage(headers.authorization, updateImageDto)
   }
 }
