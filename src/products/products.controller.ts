@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common'
+import { Controller, Get, Param, Query } from '@nestjs/common'
 import { ProductsService } from '@/products/products.service'
 
 @Controller('products')
@@ -10,15 +10,28 @@ export class ProductsController {
     return this.productsService.getProducts()
   }
 
+  @Get('product/:slug')
+  getProductBySlug(@Param('slug') slug: string) {
+    return this.productsService.getProductBySlug(slug)
+  }
+
   @Get('categories')
   getUniqueCategories() {
     return this.productsService.getUniqueCategories()
   }
 
-  @Get(':category')
-  getByCategoryProducts(@Param('category') category: string) {
-    return this.productsService.getByCategoryProducts(category)
+  @Get('brands')
+  getUniqueBrands() {
+    return this.productsService.getUniqueBrands()
   }
 
- 
+  @Get(':type/:slug')
+  getProductsWithout(@Param('type') type: string, @Param('slug') slug: string) {
+    return this.productsService.getProductsWithout(type, slug)
+  }
+
+  @Get(':type')
+  getProductsBy(@Param('type') type: string) {
+    return this.productsService.getProductsBy(type)
+  }
 }

@@ -13,9 +13,12 @@ datasource db {
 model Product {
   id          String @id @default(auto()) @map("_id") @db.ObjectId
   title       String
+  slug        String
   img         String
   description String
   category    String
+  brand       String
+  price       Int
 }
 
 model User {
