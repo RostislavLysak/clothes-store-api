@@ -8,7 +8,7 @@ export class UserService {
 
   async getUser(id: string) {
     try {
-      return this.prismaService.user.findUnique({
+      return await this.prismaService.user.findUnique({
         where: {
           id,
         },
@@ -22,7 +22,7 @@ export class UserService {
     try {
       const { firstName, lastName } = data
 
-      return this.prismaService.user.update({
+      return await this.prismaService.user.update({
         where: {
           id,
         },
@@ -40,7 +40,7 @@ export class UserService {
     try {
 
       const { img } = data
-      return this.prismaService.user.update({
+      return await this.prismaService.user.update({
         where: {
           id,
         },
